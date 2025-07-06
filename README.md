@@ -216,7 +216,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - GitHub: [@Mamoonalatif](https://github.com/Mamoonalatif)
 - LinkedIn: [Connect with me](https://linkedin.com/in/mamoona-latif)
 
-## 🙏 Acknowledgments
+## 🙏Acknowledgments
 
 - ASP.NET Core Team for the excellent framework
 - Blazor community for inspiration and best practices
@@ -231,4 +231,3 @@ If you encounter any issues or have questions:
 
 ---
 
-**Built with ❤️ using ASP.NET Core 8 and Blazor**
