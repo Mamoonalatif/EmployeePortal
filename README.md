@@ -13,16 +13,21 @@ A comprehensive web-based Employee Management System built with **ASP.NET Core 8
   - Department assignment
   - Location assignment
   - Manager relationships
+![image](https://github.com/user-attachments/assets/08a661f9-95ec-4843-a4af-2d2c3bc4324e)
+![image](https://github.com/user-attachments/assets/2ed870d4-8ff6-4f09-b494-d0bef20fd584)
 
 ### Department Management
 - Complete CRUD operations for organizational departments
 - Department-wise employee organization
 - Real-time updates across the system
+![image](https://github.com/user-attachments/assets/1fb1cd86-5a20-4e43-9570-0607a324fd64)
 
 ### Location Management
 - Manage multiple office locations (City, Country)
 - Location-based employee assignments
 - Global workforce distribution tracking
+![image](https://github.com/user-attachments/assets/9042b053-dc64-468f-9b2d-b99aa134a267)
+
 
 ### Technical Features
 - **Real-time Updates** - Blazor Server components with interactive UI
