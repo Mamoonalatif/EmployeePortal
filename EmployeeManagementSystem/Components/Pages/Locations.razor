@@ -1,0 +1,50 @@
+﻿@page "/locations"
+@using EmployeeManagementSystem.Modals
+@inject LocationService LocationService
+
+<div class="container">
+    <h3>Locations</h3>
+    <h4>Add New Location</h4>
+    <div>
+        <input @bind="newLocation.City" placeholder="City" />
+        <input @bind="newLocation.Country" placeholder="Country" />
+        <button class="btn-primary" @onclick="AddLocation">Add Location</button>
+    </div>
+    <table>
+        <thead> <tr><th>City</th><th>Country</th><th>Actions</th></tr></thead>
+        <tbody>
+            @foreach (var loc in locations){
+                <tr>
+                    <td>
+                        @if (editLocation?.LocationID == loc.LocationID) { <input @bind="editLocation.City" /> }
+                        else { @loc.City   }
+                    </td> <td>
+                        @if (editLocation?.LocationID == loc.LocationID)  { <input @bind="editLocation.Country" /> }
+                        else { @loc.Country }
+                    </td> <td>
+                        @if (editLocation?.LocationID == loc.LocationID)  {
+                            <button class="btn-primary" @onclick="() => SaveLocation(loc)">Save</button>
+                            <button class="btn-secondary" @onclick="CancelEdit">Cancel</button> }
+                        else  {
+                            <button class="btn-primary" @onclick="() => EditLocation(loc)">Edit</button>
+                            <button class="btn-danger" @onclick="() => DeleteLocation(loc.LocationID)">Delete</button> }
+                    </td>
+                </tr> }
+        </tbody>
+    </table>
+</div>
+
+@code {
+    List<Location> locations = new();
+    Location newLocation = new();
+    Location? editLocation;
+    protected override void OnInitialized() { LoadLocations(); }
+    void LoadLocations() { locations = LocationService.GetAll(); }
+    void AddLocation() { LocationService.Add(newLocation); newLocation = new(); LoadLocations(); }
+    void DeleteLocation(int id) { LocationService.Delete(id); LoadLocations(); }
+    void EditLocation(Location loc) { editLocation = new Location { LocationID = loc.LocationID, City = loc.City, Country = loc.Country }; }
+    void SaveLocation(Location loc) { LocationService.Update(editLocation); editLocation = null; LoadLocations(); }
+    void CancelEdit() { editLocation = null; }
+}
+
+

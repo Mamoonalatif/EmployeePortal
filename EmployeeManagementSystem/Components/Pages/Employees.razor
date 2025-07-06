@@ -1,0 +1,118 @@
+﻿@page "/"
+@using EmployeeManagementSystem.Modals
+@inject EmployeeService EmployeeService
+@inject DepartmentService DepartmentService
+@inject LocationService LocationService
+
+<div class="container">
+    <h3>Employees</h3>
+    <h4>Add New Employee</h4>
+    <div>
+        <input @bind="newEmployee.FirstName" placeholder="First Name" />
+        <input @bind="newEmployee.LastName" placeholder="Last Name" />
+        <input type="number" @bind="newEmployee.Salary" placeholder="Salary" />
+        <select @bind="newEmployee.DepartmentID">
+            <option disabled selected value="">-- Select Department --</option>
+            @foreach (var dept in departments) { <option value="@dept.DepartmentID">@dept.DepartmentName</option> }
+        </select>
+        <select @bind="newEmployee.LocationID">
+            <option disabled selected value="">-- Select Location --</option>
+            @foreach (var loc in locations) { <option value="@loc.LocationID">@loc.City, @loc.Country</option> }
+        </select>
+        <select @bind="newEmployee.ManagerID">
+            <option value="">-- No Manager --</option>
+            @foreach (var mgr in employees) { <option value="@mgr.EmployeeID">@mgr.FirstName @mgr.LastName</option> }
+        </select>
+        <button class="btn-primary" @onclick="AddEmployee">Add Employee</button>
+    </div>
+    <hr />
+    <h4>All Employees</h4>
+    <table>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Salary</th>
+                <th>Department</th>
+                <th>Location</th>
+                <th>Manager</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var emp in employees) {
+                <tr>
+                    <td>
+                        @if (editEmployee?.EmployeeID == emp.EmployeeID) {
+                            <input @bind="editEmployee.FirstName" /><input @bind="editEmployee.LastName" />
+                        } else { @emp.FirstName @emp.LastName }
+                    </td>
+                    <td>
+                        @if (editEmployee?.EmployeeID == emp.EmployeeID) {
+                            <input type="number" @bind="editEmployee.Salary" />
+                        } else { @emp.Salary }
+                    </td>
+                    <td>
+                        @if (editEmployee?.EmployeeID == emp.EmployeeID) {
+                            <select @bind="editEmployee.DepartmentID">
+                                @foreach (var dept in departments) { <option value="@dept.DepartmentID">@dept.DepartmentName</option> }
+                            </select>
+                        } else { @departments.FirstOrDefault(d => d.DepartmentID == emp.DepartmentID)?.DepartmentName }
+                    </td>
+                    <td>
+                        @if (editEmployee?.EmployeeID == emp.EmployeeID) {
+                            <select @bind="editEmployee.LocationID">
+                                @foreach (var loc in locations) { <option value="@loc.LocationID">@loc.City</option> }
+                            </select>
+                        } else { @locations.FirstOrDefault(l => l.LocationID == emp.LocationID)?.City }
+                    </td>
+                    <td>
+                        @if (editEmployee?.EmployeeID == emp.EmployeeID) {
+                            <select @bind="editEmployee.ManagerID">
+                                <option value="">-- No Manager --</option>
+                                @foreach (var mgr in employees.Where(e => e.EmployeeID != emp.EmployeeID)) {
+                                    <option value="@mgr.EmployeeID">@mgr.FirstName @mgr.LastName</option>   }
+                            </select>
+                        } else { @employees.FirstOrDefault(m => m.EmployeeID == emp.ManagerID)?.FirstName }
+                    </td>
+                    <td class="actions">
+                        @if (editEmployee?.EmployeeID == emp.EmployeeID) {
+                            <button class="btn-primary" @onclick="() => SaveEmployee(editEmployee)">Save</button>
+                            <button class="btn-secondary" @onclick="CancelEdit">Cancel</button>
+                        } else {
+                            <button class="btn-primary" @onclick="() => EditEmployee(emp)">Edit</button>
+                            <button class="btn-danger" @onclick="() => DeleteEmployee(emp.EmployeeID)">Delete</button> }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+@code {
+    List<Employee> employees = new();
+    List<Department> departments = new();
+    List<Location> locations = new();
+    Employee newEmployee = new();
+    Employee? editEmployee;
+    protected override void OnInitialized() { LoadData(); }
+    void LoadData() {
+        employees = EmployeeService.GetAll();
+        departments = DepartmentService.GetAll();
+        locations = LocationService.GetAll();
+    }
+    void AddEmployee() { EmployeeService.Add(newEmployee);  newEmployee = new();   LoadData();  }
+    void DeleteEmployee(int id) { EmployeeService.Delete(id); LoadData(); }
+    void EditEmployee(Employee emp) {
+        editEmployee = new Employee {
+            EmployeeID = emp.EmployeeID,
+            FirstName = emp.FirstName,
+            LastName = emp.LastName,
+            Salary = emp.Salary,
+            DepartmentID = emp.DepartmentID,
+            LocationID = emp.LocationID,
+            ManagerID = emp.ManagerID
+        };
+    }
+    void SaveEmployee(Employee emp) { EmployeeService.Update(emp); editEmployee = null; LoadData(); }
+    void CancelEdit() { editEmployee = null; }
+}

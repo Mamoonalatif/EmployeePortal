@@ -1,0 +1,45 @@
+﻿@page "/departments"
+@using EmployeeManagementSystem.Modals
+@inject DepartmentService DepartmentService
+
+<div class="container">
+    <h3>Departments</h3>
+    <h4>Add New Department</h4>
+    <div>
+        <input @bind="newDepartment.DepartmentName" placeholder="Department Name" />
+        <button class="btn-primary" @onclick="AddDepartment">Add Department</button>
+    </div>
+    <table>
+        <thead> <tr><th>Name</th><th>Actions</th></tr> </thead>
+        <tbody>
+            @foreach (var dept in departments){
+                <tr>
+                    <td>
+                        @if (editDept?.DepartmentID == dept.DepartmentID) { <input @bind="editDept.DepartmentName" /> }
+                        else { @dept.DepartmentName }
+                    </td>
+                    <td>
+                        @if (editDept?.DepartmentID == dept.DepartmentID) {
+                            <button class="btn-primary" @onclick="() => SaveDepartment(dept)">Save</button>
+                            <button class="btn-secondary" @onclick="CancelEdit">Cancel</button> }
+                        else {
+                            <button class="btn-primary" @onclick="() => EditDepartment(dept)">Edit</button>
+                            <button class="btn-danger" @onclick="() => DeleteDepartment(dept.DepartmentID)">Delete</button> }
+                    </td>
+                </tr> }
+        </tbody>
+    </table>
+</div>
+
+@code {
+    List<Department> departments = new();
+    Department newDepartment = new();
+    Department? editDept;
+    protected override void OnInitialized() { LoadDepartments(); }
+    void LoadDepartments() { departments = DepartmentService.GetAll(); }
+    void AddDepartment() { DepartmentService.Add(newDepartment); newDepartment = new(); LoadDepartments(); }
+    void DeleteDepartment(int id) { DepartmentService.Delete(id); LoadDepartments(); }
+    void EditDepartment(Department dept) { editDept = new Department { DepartmentID = dept.DepartmentID, DepartmentName = dept.DepartmentName }; }
+    void SaveDepartment(Department dept) { DepartmentService.Update(editDept); editDept = null; LoadDepartments(); }
+    void CancelEdit() { editDept = null; }
+}
